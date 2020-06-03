@@ -82,9 +82,9 @@ class Blackbalsam:
         user_path = os.path.join (home_dir, ".blackbalsam.yaml")
         system_path = os.path.join (self.shared_storage_path,
                              "/blackbalsam/.blackbalsam.yaml")
-        system_path = os.path.abspath (os.path.join (
-            os.path.dirname (__file__), "..", "..",
-            "blackbalsam.yaml"))
+        #system_path = os.path.abspath (os.path.join (
+        #    os.path.dirname (__file__), "..", "..",
+        #    "blackbalsam.yaml"))
         logger.debug (f"user_path: {user_path}")
         logger.debug (f"system_path: {system_path}")
         if os.path.exists (system_path):
@@ -137,11 +137,11 @@ class Blackbalsam:
             "spark.executor.memory"          : "512M",
             # Persistence
             "spark.kubernetes.driver.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.options.claimName" : 
-               "blackbalsam-jhub-nfs-pvc",
+               "stdnfs",
             "spark.kubernetes.driver.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.mount.path" :
                self.shared_storage_path,
             "spark.kubernetes.executor.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.options.claimName" : 
-               "blackbalsam-jhub-nfs-pvc",
+               "stdnfs",
             "spark.kubernetes.executor.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.mount.path" :
                self.shared_storage_path,
             # Docker Image and Python 
