@@ -85,16 +85,16 @@ class Blackbalsam:
 
     def get_config(self):
         config = {}
-        home_dir = os.path.expanduser("~")
-        user_path = os.path.join(home_dir, ".blackbalsam.yaml")
-        system_path = os.path.join(self.shared_storage_path,
-                                   "/blackbalsam/.blackbalsam.yaml")
-        system_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), "..", "..",
-            "blackbalsam.yaml"))
-        logger.debug(f"user_path: {user_path}")
-        logger.debug(f"system_path: {system_path}")
-        if os.path.exists(system_path):
+        home_dir = os.path.expanduser("~")        
+        user_path = os.path.join (home_dir, ".blackbalsam.yaml")
+        system_path = os.path.join (self.shared_storage_path,
+                             "/blackbalsam/.blackbalsam.yaml")
+        #system_path = os.path.abspath (os.path.join (
+        #    os.path.dirname (__file__), "..", "..",
+        #    "blackbalsam.yaml"))
+        logger.debug (f"user_path: {user_path}")
+        logger.debug (f"system_path: {system_path}")
+        if os.path.exists (system_path):
             with open(system_path, "r") as stream:
                 config = yaml.safe_load(stream)
             logger.info(f"--loaded {system_path}")
@@ -144,14 +144,14 @@ class Blackbalsam:
             "spark.executor.instances": "3",
             "spark.executor.memory": "512M",
             # Persistence
-            "spark.kubernetes.driver.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.options.claimName":
-                "blackbalsam-jhub-nfs-pvc",
-            "spark.kubernetes.driver.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.mount.path":
-                self.shared_storage_path,
-            "spark.kubernetes.executor.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.options.claimName":
-                "blackbalsam-jhub-nfs-pvc",
-            "spark.kubernetes.executor.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.mount.path":
-                self.shared_storage_path,
+            "spark.kubernetes.driver.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.options.claimName" : 
+               "stdnfs",
+            "spark.kubernetes.driver.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.mount.path" :
+               self.shared_storage_path,
+            "spark.kubernetes.executor.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.options.claimName" : 
+               "stdnfs",
+            "spark.kubernetes.executor.volumes.persistentVolumeClaim.blackbalsam-jhub-nfs-pvc.mount.path" :
+               self.shared_storage_path,
             # Docker Image and Python 
             "spark.kubernetes.pyspark.pythonVersion": "3",
             "spark.kubernetes.container.image": "blackbalsam/spark-py:0.0.11",
