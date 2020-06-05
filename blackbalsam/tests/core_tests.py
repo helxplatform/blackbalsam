@@ -1,5 +1,8 @@
 import unittest
 
+from pyspark.conf import SparkConf
+from pyspark.sql.dataframe import DataFrame
+
 from blackbalsam.core import Blackbalsam
 
 
@@ -7,8 +10,9 @@ class TestCoreBlackbalsam(unittest.TestCase):
 
     def setUp(self):
         self.bb = Blackbalsam()
+        self.conf = SparkConf().getAll()
         self.spark = self.bb.get_spark({
-            "spark.app.name": "test1_blackbalsam",
+            "spark.app.name": "pyspark_test_blackbalsam",
             "spark.executor.instances": "2",
             "spark.driver.memory": "512M",
             "spark.executor.memory": "512M",
@@ -16,6 +20,7 @@ class TestCoreBlackbalsam(unittest.TestCase):
 
     def tearDown(self):
         self.spark.stop()
+        SparkConf().setAll(self.conf())
 
     def test_spark_methods(self):
         import pandas as pd
@@ -23,5 +28,4 @@ class TestCoreBlackbalsam(unittest.TestCase):
                                     "registration": ["AB98ABCD", "BC99BCDF", "CD00CDE", "DE01DEF", "EF02EFG"],
                                     "year": [1998, 1999, 2000, 2001, 2002]})
         data = self.spark.createDataFrame(data_pandas)
-        from pyspark.sql.dataframe import DataFrame
         self.assertIsInstance(data, DataFrame)
