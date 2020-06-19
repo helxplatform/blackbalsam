@@ -1,6 +1,6 @@
 # Blackbalsam
 
-![image](https://user-images.githubusercontent.com/306971/80292483-05426b00-8725-11ea-9ab3-0686c8a6c76a.png)
+![image](https://user-images.githubusercontent.com/306971/85154213-2e631180-b225-11ea-8477-56343870a53f.png)
 
    * [Blackbalsam](https://blackbalsam.renci.org/blackbalsam/hub/login) is an open source data science environment with an initial focus on COVID-19 and North Carolina.
       * [Overview](#overview)
