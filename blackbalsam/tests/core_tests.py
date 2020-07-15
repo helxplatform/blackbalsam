@@ -20,7 +20,7 @@ class TestCoreBlackbalsam(unittest.TestCase):
 
     def tearDown(self):
         self.spark.stop()
-        SparkConf().setAll(self.conf())
+        SparkConf().setAll(self.conf)
 
     def test_spark_methods(self):
         import pandas as pd

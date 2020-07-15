@@ -77,7 +77,7 @@ class Blackbalsam:
         self.environ_config = self.get_config()
         self.store = Storage(
             endpoint=self.environ_config.get(
-                "spark.hadoop.fs.s3a.endpoint", "http://minio:9000"),
+                "spark.hadoop.fs.s3a.endpoint", "minio:9000"),
             access_key=self.environ_config.get(
                 "spark.hadoop.fs.s3a.access.key", "minio"),
             secret_key=self.environ_config.get(
