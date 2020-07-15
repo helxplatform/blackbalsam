@@ -88,7 +88,7 @@ class Blackbalsam:
         home_dir = os.path.expanduser("~")        
         user_path = os.path.join (home_dir, ".blackbalsam.yaml")
         system_path = os.path.join (self.shared_storage_path,
-                             "/blackbalsam/.blackbalsam.yaml")
+                             "blackbalsam/.blackbalsam.yaml")
         #system_path = os.path.abspath (os.path.join (
         #    os.path.dirname (__file__), "..", "..",
         #    "blackbalsam.yaml"))

@@ -1,6 +1,6 @@
 # Copyright (c) Renaissance Computing Institute.
 # Distributed under the terms of the MIT License.
-ARG BASE_CONTAINER=jupyter/scipy-notebook
+ARG BASE_CONTAINER=jupyter/scipy-notebook:dd2087c75645
 FROM blackbalsam/spark-py as executor
 FROM $BASE_CONTAINER as base
 
@@ -13,7 +13,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/
 RUN set -ex && \
 	apt-get update && \
 	ln -s /lib /lib64 && \
-	apt-get install -y bash libc6 libpam-modules libnss3 wget python3 python3-pip && \
+	apt-get install -y bash libc6 libpam-modules libnss3 wget python3.7 python3-pip && \
 	chmod +x /bin/tini && \
 	rm /bin/sh && \
 	ln -sv /bin/bash /bin/sh && \
@@ -72,7 +72,8 @@ RUN pip install jupyter-spark \
 	&& jupyter nbextension install --py jupyter_spark \
 	&& jupyter nbextension enable --py jupyter_spark \
 	&& jupyter nbextension enable --py widgetsnbextension \
-	&& pip install nbconvert==5.3.1 tornado==5.0
+	&& pip install nbconvert==5.3.1 tornado==5.0 \
+        && pip install PyCap
 
 # R pre-requisites
 RUN apt-get update && \
@@ -108,13 +109,14 @@ RUN conda install --quiet --yes \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
+RUN R -e 'install.packages("redcapAPI", repo="http://cran.rstudio.com/")'
+
 # Install AI toolkit (Tensorflow, Keras, Gensim, PyTorch, sklearn, numpy, OpenKE)
 RUN pip install --upgrade tensorflow keras gensim sklearn numpy torch
 #    git clone https://github.com/thunlp/OpenKE.git && \
 #    cd OpenKE/openke && \
 #    ./make.sh
 
-# Be a non root user.
 USER $NB_UID
 
 # Go home.
@@ -126,6 +128,10 @@ RUN cd $HOME && git clone https://github.com/helxplatform/blackbalsam.git --bran
 # Set the Python path.
 ENV PYTHONPATH=$PYTHONPATH:$HOME/blackbalsam:/home/shared/blackbalsam
 
+USER root
+RUN chown $NB_UID:root /home/jovyan
+
+USER $NB_UID
 #ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
 # using spark packages: https://gist.github.com/parente/c95fdaba5a9a066efaab
