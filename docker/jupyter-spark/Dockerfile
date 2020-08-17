@@ -1,7 +1,7 @@
 # Copyright (c) Renaissance Computing Institute.
 # Distributed under the terms of the MIT License.
 ARG BASE_CONTAINER=jupyter/scipy-notebook:dd2087c75645
-FROM blackbalsam/spark-py as executor
+FROM heliumdatastage/spark-py:v0.0.2 as executor
 FROM $BASE_CONTAINER as base
 
 LABEL maintainer="RENCI <info@renci.org>"
@@ -47,6 +47,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip \
 	SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info" \
 	HADOOP_HOME=$INSTALL_DIR/hadoop \
+        HTTP2_DISABLE=true \
 	PATH=$PATH:$HADOOP_HOME/bin \
 	PATH=$PATH:$SPARK_HOME/bin \
 	LD_LIBRARY_PATH=$HADOOP_HOME/lib/native \
@@ -129,7 +130,7 @@ RUN cd $HOME && git clone https://github.com/helxplatform/blackbalsam.git --bran
 ENV PYTHONPATH=$PYTHONPATH:$HOME/blackbalsam:/home/shared/blackbalsam
 
 USER root
-RUN chown $NB_UID:root /home/jovyan
+RUN chown -R $NB_UID:0 /home/jovyan
 
 USER $NB_UID
 #ENTRYPOINT [ "/opt/entrypoint.sh" ]

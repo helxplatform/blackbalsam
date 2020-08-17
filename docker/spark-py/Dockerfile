@@ -2,7 +2,7 @@
 # Copyright (c) Renaissance Computing Institute.
 # Distributed under the terms of the MIT License.
 #
-ARG BASE_CONTAINER=openjdk:8-jdk-slim
+ARG BASE_CONTAINER=openjdk:8u252-jdk-slim
 FROM $BASE_CONTAINER
 
 LABEL maintainer="RENCI <info@renci.org>"
@@ -15,7 +15,7 @@ ENV INSTALL_DIR=/usr/local
 ENV USER spark
 ENV HOME /home/$USER
 WORKDIR $HOME
-ENV UID 1000
+ENV UID 999
 RUN adduser --disabled-login --home $HOME --shell /bin/bash --uid $UID $USER && \
 	chown -R $UID:$UID $HOME
 
