@@ -45,3 +45,4 @@ r-survey
 r-survival
 r-survminer
 r-viridis
+r-labelvector

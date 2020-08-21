@@ -1,4 +1,4 @@
-FROM heliumdatastage/blackbalsam:py3.7-0.0.1
+FROM heliumdatastage/blackbalsam:py3.7-v0.0.9
 
 USER root
 
