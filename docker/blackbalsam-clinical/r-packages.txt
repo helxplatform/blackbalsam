@@ -46,3 +46,4 @@ r-survival
 r-survminer
 r-viridis
 r-labelvector
+r-filesstrings
