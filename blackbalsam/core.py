@@ -119,6 +119,16 @@ class Blackbalsam:
     3. update hub helm w version of the jupyter docker
     4. retry s3
     """
+    def get_namespace(self, namespace="default"):
+        try:
+            with open("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r") as secrets:
+                for line in secrets:
+                    namespace = line
+                    break
+        except Exception as e:
+            logger.debug(f"-- downward api namespace lookup failed.")
+        return namespace
+
 
     def get_spark(self, conf={}):
         app_name = "spark.app.name"
@@ -132,9 +142,10 @@ class Blackbalsam:
 
         os.environ['PYSPARK_PYTHON'] = '/usr/bin/python3'
         os.environ['PYSPARK_DRIVER_PYTHON'] = '/usr/bin/python3'
+        
         default_conf = {
             # App Name & Namespace
-            "spark.kubernetes.namespace": "blackbalsam",
+            "spark.kubernetes.namespace": self.get_namespace(),
             "spark.app.name": "blackbalsam-connectivity-0",
             # Cluster Topology
             "spark.master": "k8s://https://kubernetes.default:443",
