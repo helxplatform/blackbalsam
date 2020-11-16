@@ -124,7 +124,9 @@ USER $NB_UID
 WORKDIR $HOME
 
 # Install Blackbalsam.
-RUN cd $HOME && git clone https://github.com/helxplatform/blackbalsam.git --branch develop $HOME/blackbalsam
+RUN cd $HOME && git clone https://github.com/helxplatform/blackbalsam.git --branch develop $HOME/blackbalsam && \
+    rm -rf $HOME/blackbalsam/clinical-demo-notebooks && \
+    rm -rf $HOME/blackbalsam/docker/blackbalsam-clinical 
 
 # Set the Python path.
 ENV PYTHONPATH=$PYTHONPATH:$HOME/blackbalsam:/home/shared/blackbalsam
