@@ -1,7 +1,7 @@
 # Copyright (c) Renaissance Computing Institute.
 # Distributed under the terms of the MIT License.
-ARG BASE_CONTAINER=jupyter/scipy-notebook
-FROM blackbalsam/spark-py as executor
+ARG BASE_CONTAINER=jupyter/scipy-notebook:dd2087c75645
+FROM heliumdatastage/spark-py:v0.0.2 as executor
 FROM $BASE_CONTAINER as base
 
 LABEL maintainer="RENCI <info@renci.org>"
@@ -13,7 +13,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/
 RUN set -ex && \
 	apt-get update && \
 	ln -s /lib /lib64 && \
-	apt-get install -y bash libc6 libpam-modules libnss3 wget python3 python3-pip && \
+	apt-get install -y bash libc6 libpam-modules libnss3 wget python3.7 python3-pip && \
 	chmod +x /bin/tini && \
 	rm /bin/sh && \
 	ln -sv /bin/bash /bin/sh && \
@@ -47,6 +47,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip \
 	SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info" \
 	HADOOP_HOME=$INSTALL_DIR/hadoop \
+        HTTP2_DISABLE=true \
 	PATH=$PATH:$HADOOP_HOME/bin \
 	PATH=$PATH:$SPARK_HOME/bin \
 	LD_LIBRARY_PATH=$HADOOP_HOME/lib/native \
@@ -72,7 +73,8 @@ RUN pip install jupyter-spark \
 	&& jupyter nbextension install --py jupyter_spark \
 	&& jupyter nbextension enable --py jupyter_spark \
 	&& jupyter nbextension enable --py widgetsnbextension \
-	&& pip install nbconvert==5.3.1 tornado==5.0
+	&& pip install nbconvert==5.3.1 tornado==5.0 \
+        && pip install PyCap
 
 # R pre-requisites
 RUN apt-get update && \
@@ -108,24 +110,31 @@ RUN conda install --quiet --yes \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
+RUN R -e 'install.packages("redcapAPI", repo="http://cran.rstudio.com/")'
+
 # Install AI toolkit (Tensorflow, Keras, Gensim, PyTorch, sklearn, numpy, OpenKE)
 RUN pip install --upgrade tensorflow keras gensim sklearn numpy torch
 #    git clone https://github.com/thunlp/OpenKE.git && \
 #    cd OpenKE/openke && \
 #    ./make.sh
 
-# Be a non root user.
 USER $NB_UID
 
 # Go home.
 WORKDIR $HOME
 
 # Install Blackbalsam.
-RUN cd $HOME && git clone https://github.com/stevencox/blackbalsam.git $HOME/blackbalsam
+RUN cd $HOME && git clone https://github.com/helxplatform/blackbalsam.git --branch develop $HOME/blackbalsam && \
+    rm -rf $HOME/blackbalsam/clinical-demo-notebooks && \
+    rm -rf $HOME/blackbalsam/docker/blackbalsam-clinical 
 
 # Set the Python path.
 ENV PYTHONPATH=$PYTHONPATH:$HOME/blackbalsam:/home/shared/blackbalsam
 
+USER root
+RUN chown -R $NB_UID:0 /home/jovyan
+
+USER $NB_UID
 #ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
 # using spark packages: https://gist.github.com/parente/c95fdaba5a9a066efaab
